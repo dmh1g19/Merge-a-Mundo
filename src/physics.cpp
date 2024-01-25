@@ -5,32 +5,26 @@
 #include <unordered_map>
 
 b2World* world; 
+ShapeFactory factory;
 std::unordered_map<b2Body*, std::shared_ptr<Shape>> bodyShapeMap;
 
 void stepPhysics() {
     world->Step(simulationFrameRate, velocityIteration, positionIteration);
 }
 
-void initStaticGround() {
+void initStaticGround(int x, int y, int w, int h, bool dyn) {
     world = new b2World(b2Vec2(0.0, gravity));
 
-    // Bucket dimensions
-    float bucketWidth = pixels2Meters(WIDTH / 2);
-    float bucketHeight = pixels2Meters(50);
-    float wallThickness = pixels2Meters(20);    
+    b2BodyDef bodyDef;
+    bodyDef.position.Set(pixels2Meters(x), pixels2Meters(y));
+    b2Body* body = world->CreateBody(&bodyDef);
 
-    // Create a static body for the bucket
-    b2BodyDef bucketBodyDef;
-
-    int bucketOffset = 100;
-    float bucketCenterX = pixels2Meters(WIDTH / 2); 
-    float bucketCenterY = pixels2Meters(HEIGHT - bucketHeight / 2 - bucketOffset);
-    bucketBodyDef.position.Set(bucketCenterX, bucketCenterY);
-    
-    b2Body* bucketBody = world->CreateBody(&bucketBodyDef);
     b2PolygonShape bottomShape;
-    bottomShape.SetAsBox(bucketWidth / 2, wallThickness / 2, b2Vec2(0, bucketHeight / 2), 0);
-    bucketBody->CreateFixture(&bottomShape, 0.0f);
+    bottomShape.SetAsBox(pixels2Meters(w / 2), pixels2Meters(h / 2));
+    body->CreateFixture(&bottomShape, 0.0f);
+
+    std::shared_ptr<Shape> ground = factory.createShape("Ground");
+    addToMap(ground, body, "../shaders/vertex_shader.glsl");
 }
 
 b2Body* addRect(int x, int y, int w, int h, bool dyn) {
@@ -38,11 +32,9 @@ b2Body* addRect(int x, int y, int w, int h, bool dyn) {
 
     b2BodyDef bodydef;
     bodydef.position.Set(pixels2Meters(x), pixels2Meters(y));
-
     if (dyn) {
         bodydef.type = b2_dynamicBody;
     }
-
     b2Body* body = world->CreateBody(&bodydef);
 
     b2PolygonShape shape;
@@ -51,16 +43,20 @@ b2Body* addRect(int x, int y, int w, int h, bool dyn) {
     b2FixtureDef fixturedef;
     fixturedef.shape = &shape;
     fixturedef.density = dynamicBodyDensity; 
-
     body->CreateFixture(&fixturedef);
 
-    // Create and initialize a new shape and associate the shape with the body in a map
-    ShapeFactory factory;
     std::shared_ptr<Shape> square = factory.createShape("Square");
-    square->init("../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
-    bodyShapeMap[body] = square;
+    addToMap(square, body, "../shaders/vertex_shader.glsl");
 
     return body;
+}
+
+// Associate the shape with the body in a map this essentially adds the object to the world 
+void addToMap(std::shared_ptr<Shape> object, b2Body* body, std::string vertexShader) {
+    // TODO: dynamically add shaders, perhaps through a shader class
+
+    object->init(vertexShader, "../shaders/fragment_shader_red.glsl");
+    bodyShapeMap[body] = object;
 }
 
 // Draw all the objects in the scene after associating the box2d objects with the opengl shapes
@@ -78,7 +74,7 @@ void renderScene() {
         const b2Vec2& position = body->GetPosition();
         float angle = body->GetAngle();
 
-        shape->update(glm::vec2(meters2Pixels(position.x), meters2Pixels(position.y)), angle);
+        shape->update(glm::vec2(meters2Pixels(position.x), meters2Pixels(position.y)), angle/-1); // Have to invert the angle for some reason
         shape->render();
     }
 

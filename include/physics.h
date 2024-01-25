@@ -18,9 +18,10 @@ const int velocityIteration = 8;
 const int positionIteration = 3;
 const int gravity = 9.81;
 
-void initStaticGround();
+void initStaticGround(int, int, int, int, bool);
 void stepPhysics();
 void renderScene();
+void addToMap(std::shared_ptr<Shape>, b2Body*, std::string);
 
 b2Body* addRect(int, int, int, int, bool);
 

@@ -4,9 +4,9 @@
 #include <memory>
 #include <string>
 #include <glm/glm.hpp>          // The main GLM header
-#include <glm/gtc/matrix_transform.hpp>  // For glm::translate, glm::rotate, glm::scale
 #include <glm/gtc/type_ptr.hpp>  // For glm::value_ptr
 
+//TODO: Update to use indexing 
 
 class Shape {
 public:
@@ -24,6 +24,29 @@ private:
     // weird OpenGL things, the object is commonly initialized
     // at the center fo the screen
 
+    float vertices[18] = {
+        -0.5f,  0.5f, 0.0f, 
+         0.5f,  0.5f, 0.0f, 
+        -0.5f, -0.5f, 0.0f, 
+
+         0.5f,  0.5f, 0.0f, 
+         0.5f, -0.5f, 0.0f, 
+        -0.5f, -0.5f, 0.0f  
+    };
+
+    unsigned int VBO;
+    unsigned int VAO;
+    unsigned int shaderProgram;
+    glm::mat4 transformationMatrix;
+
+public:
+    void init(std::string, std::string) override;
+    void update(const glm::vec2&, float) override;
+    void render() override;
+};
+
+class Ground : public Shape {
+private:
     float vertices[18] = {
         -0.5f,  0.5f, 0.0f, 
          0.5f,  0.5f, 0.0f, 
