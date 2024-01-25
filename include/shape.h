@@ -10,7 +10,7 @@
 
 class Shape {
 public:
-    virtual void init(int, int, std::string, std::string) = 0;
+    virtual void init(std::string, std::string) = 0;
     virtual void update(const glm::vec2&, float) = 0; 
     virtual void render() = 0;
     virtual ~Shape() = default;
@@ -40,7 +40,7 @@ private:
     glm::mat4 transformationMatrix;
 
 public:
-    void init(int, int, std::string, std::string) override;
+    void init(std::string, std::string) override;
     void update(const glm::vec2&, float) override;
     void render() override;
 };

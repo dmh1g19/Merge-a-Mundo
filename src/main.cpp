@@ -2,6 +2,7 @@
 #include "userInput.h"
 #include "rendering.h"
 #include "physics.h"
+#include "utilities.h"
 #include "shape.h"
 
 double lastFrameTime = glfwGetTime();
@@ -22,9 +23,7 @@ int main()
         {
             stepPhysics();
             processInput(window);
-
             renderScene();
-
             glfwSwapBuffers(window);
             glfwPollEvents();
 

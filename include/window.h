@@ -4,9 +4,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+// Application window dimensions
 const int WIDTH = 640;
 const int HEIGHT = 480;
 
+// Frame rate settings
 const double framesPerSecond = 30.0;
 const double targetFrameTime = 1.0 / framesPerSecond;
 

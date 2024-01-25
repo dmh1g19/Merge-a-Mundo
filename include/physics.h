@@ -8,10 +8,8 @@
 #include <box2d/box2d.h>
 #include <memory>
 
+// Global pointer to the Box2D world
 extern b2World* world;
-
-const float M2P = 20;
-const float P2M = 1 / M2P;
 
 const float simulationFrameRate = 1.0 / framesPerSecond;
 const float dynamicBodyDensity = 1.0;

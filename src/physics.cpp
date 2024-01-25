@@ -1,4 +1,5 @@
 #include "physics.h"
+#include "utilities.h"
 #include "shape.h"
 #include <iostream>
 #include <unordered_map>
@@ -14,16 +15,16 @@ void initStaticGround() {
     world = new b2World(b2Vec2(0.0, gravity));
 
     // Bucket dimensions
-    float bucketWidth = WIDTH / 2 * P2M;
-    float bucketHeight = 50 * P2M;
-    float wallThickness = 20 * P2M;    
+    float bucketWidth = pixels2Meters(WIDTH / 2);
+    float bucketHeight = pixels2Meters(50);
+    float wallThickness = pixels2Meters(20);    
 
     // Create a static body for the bucket
     b2BodyDef bucketBodyDef;
 
     int bucketOffset = 100;
-    float bucketCenterX = WIDTH / 2 * P2M; 
-    float bucketCenterY = (HEIGHT - bucketHeight / 2 - bucketOffset) * P2M;
+    float bucketCenterX = pixels2Meters(WIDTH / 2); 
+    float bucketCenterY = pixels2Meters(HEIGHT - bucketHeight / 2 - bucketOffset);
     bucketBodyDef.position.Set(bucketCenterX, bucketCenterY);
     
     b2Body* bucketBody = world->CreateBody(&bucketBodyDef);
@@ -36,7 +37,7 @@ b2Body* addRect(int x, int y, int w, int h, bool dyn) {
     std::cout << "\nMade rectangle at " + std::to_string(x) + ", " + std::to_string(y) << std::endl;
 
     b2BodyDef bodydef;
-    bodydef.position.Set(x * P2M, y * P2M); // Convert coordinates from pixels to meters
+    bodydef.position.Set(pixels2Meters(x), pixels2Meters(y));
 
     if (dyn) {
         bodydef.type = b2_dynamicBody;
@@ -45,7 +46,7 @@ b2Body* addRect(int x, int y, int w, int h, bool dyn) {
     b2Body* body = world->CreateBody(&bodydef);
 
     b2PolygonShape shape;
-    shape.SetAsBox(P2M * w / 2, P2M * h / 2); // Convert dimensions from pixels to meters
+    shape.SetAsBox(pixels2Meters(w / 2), pixels2Meters(h / 2));
 
     b2FixtureDef fixturedef;
     fixturedef.shape = &shape;
@@ -53,12 +54,10 @@ b2Body* addRect(int x, int y, int w, int h, bool dyn) {
 
     body->CreateFixture(&fixturedef);
 
-    // TODO: add to its own function
-    // Create and initialize a new shape
-    // Associate the shape with the body in a map
+    // Create and initialize a new shape and associate the shape with the body in a map
     ShapeFactory factory;
-    auto square = factory.createShape("Square");
-    square->init(x, y, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
+    std::shared_ptr<Shape> square = factory.createShape("Square");
+    square->init("../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
     bodyShapeMap[body] = square;
 
     return body;
@@ -79,7 +78,7 @@ void renderScene() {
         const b2Vec2& position = body->GetPosition();
         float angle = body->GetAngle();
 
-        shape->update(glm::vec2(position.x * M2P, position.y * M2P), angle);
+        shape->update(glm::vec2(meters2Pixels(position.x), meters2Pixels(position.y)), angle);
         shape->render();
     }
 
