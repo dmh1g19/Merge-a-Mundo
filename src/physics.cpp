@@ -12,7 +12,7 @@ void stepPhysics() {
     world->Step(simulationFrameRate, velocityIteration, positionIteration);
 }
 
-void initStaticGround(int x, int y, int w, int h, bool dyn) {
+void addStaticGround(int x, int y, int w, int h, bool dyn) {
     world = new b2World(b2Vec2(0.0, gravity));
 
     b2BodyDef bodyDef;
@@ -20,14 +20,15 @@ void initStaticGround(int x, int y, int w, int h, bool dyn) {
     b2Body* body = world->CreateBody(&bodyDef);
 
     b2PolygonShape bottomShape;
-    bottomShape.SetAsBox(pixels2Meters(w / 2), pixels2Meters(h / 2));
+    bottomShape.SetAsBox(pixels2Meters(w/2), pixels2Meters(h/2)); // We must provide half of the width and height as per box2d spec
     body->CreateFixture(&bottomShape, 0.0f);
 
     std::shared_ptr<Shape> ground = factory.createShape("Ground");
+    ground->setWidthHeight(w, h);
     addToMap(ground, body, "../shaders/vertex_shader.glsl");
 }
 
-b2Body* addRect(int x, int y, int w, int h, bool dyn) {
+void addRect(int x, int y, int w, int h, bool dyn) {
     std::cout << "\nMade rectangle at " + std::to_string(x) + ", " + std::to_string(y) << std::endl;
 
     b2BodyDef bodydef;
@@ -38,7 +39,7 @@ b2Body* addRect(int x, int y, int w, int h, bool dyn) {
     b2Body* body = world->CreateBody(&bodydef);
 
     b2PolygonShape shape;
-    shape.SetAsBox(pixels2Meters(w / 2), pixels2Meters(h / 2));
+    shape.SetAsBox(pixels2Meters(w/2), pixels2Meters(h/2));
 
     b2FixtureDef fixturedef;
     fixturedef.shape = &shape;
@@ -46,9 +47,9 @@ b2Body* addRect(int x, int y, int w, int h, bool dyn) {
     body->CreateFixture(&fixturedef);
 
     std::shared_ptr<Shape> square = factory.createShape("Square");
-    addToMap(square, body, "../shaders/vertex_shader.glsl");
+    square->setWidthHeight(w, h);
 
-    return body;
+    addToMap(square, body, "../shaders/vertex_shader.glsl");
 }
 
 // Associate the shape with the body in a map this essentially adds the object to the world 

@@ -6,9 +6,6 @@
 
 bool mousePressed = false;
 
-int objectWidthPixels = 20;
-int objectHeightPixels = 20;
-
 void processInput(GLFWwindow* window) {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         std::cout << "Esc key pressed: Window terminated by user" << std::endl;
@@ -22,7 +19,7 @@ void processInput(GLFWwindow* window) {
             double ypos;
 
             glfwGetCursorPos(window, &xpos, &ypos);
-            b2Body* body = addRect(xpos, ypos, objectWidthPixels, objectHeightPixels, true); 
+            addRect(xpos, ypos, 20, 20, true); 
         }
     }
 }

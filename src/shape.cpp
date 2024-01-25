@@ -17,7 +17,7 @@ void Square::update(const glm::vec2& position, float rotation) {
     //std::cout << "Updating position: " + std::to_string(position.x) + ", " + std::to_string(position.y) + ", " + std::to_string(rotation) << std::endl;
     transformationMatrix = glm::mat4(1.0f);
     transformationMatrix = glm::translate(transformationMatrix, glm::vec3(screenCoordsToOpenGL(position), 0.0f));
-    transformationMatrix = glm::scale(transformationMatrix, glm::vec3(shapeSizeToOpenGL(20.0f, 20.0f), 1.0f));
+    transformationMatrix = glm::scale(transformationMatrix, glm::vec3(shapeSizeToOpenGL(width, height), 1.0f));
     transformationMatrix = glm::rotate(transformationMatrix, rotation, glm::vec3(0.0, 0.0, 1.0));
 }
 
@@ -33,6 +33,11 @@ void Square::render() {
     }
 }
 
+void Square::setWidthHeight(int w, int h) {
+    width = w;
+    height = h;
+}
+
 void Ground::init(std::string vertexShaderPath, std::string fragmentShaderPath) {
     initBuffers(VBO, VAO, vertices, sizeof(vertices));
     unsigned int vs = initVertexShader(vertexShaderPath);
@@ -44,7 +49,12 @@ void Ground::init(std::string vertexShaderPath, std::string fragmentShaderPath) 
 void Ground::update(const glm::vec2& position, float rotation) {
     transformationMatrix = glm::mat4(1.0f);
     transformationMatrix = glm::translate(transformationMatrix, glm::vec3(screenCoordsToOpenGL(position), 0.0f));
-    transformationMatrix = glm::scale(transformationMatrix, glm::vec3(shapeSizeToOpenGL(WIDTH/2, 20.0f), 1.0f));
+    transformationMatrix = glm::scale(transformationMatrix, glm::vec3(shapeSizeToOpenGL(width, height), 1.0f));
+}
+
+void Ground::setWidthHeight(int w, int h) {
+    width = w;
+    height = h;
 }
 
 void Ground::render() {

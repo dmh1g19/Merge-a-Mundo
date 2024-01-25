@@ -6,6 +6,8 @@
 #include <box2d/box2d.h>
 #include <iostream>
 
+// OpenGL uses pixels, Box2D uses meters
+
 // Conversion constants between meters and pixels
 const float M2P = 20.0f;
 const float P2M = 1.0f / M2P;
