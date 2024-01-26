@@ -14,6 +14,8 @@ public:
     virtual void update(const glm::vec2&, float) = 0; 
     virtual void render() = 0;
     virtual void setWidthHeight(int, int) = 0;
+    virtual void useShaderProg() = 0;
+    virtual void draw() = 0;
     virtual ~Shape() = default;
 };
 
@@ -47,6 +49,8 @@ public:
     void init(std::string, std::string) override;
     void update(const glm::vec2&, float) override;
     void render() override;
+    void useShaderProg() override;
+    void draw() override;
 };
 
 class Ground : public Shape {
@@ -73,6 +77,8 @@ public:
     void init(std::string, std::string) override;
     void update(const glm::vec2&, float) override;
     void render() override;
+    void useShaderProg() override;
+    void draw() override;
 };
 
 class ShapeFactory {

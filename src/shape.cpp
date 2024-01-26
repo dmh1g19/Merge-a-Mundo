@@ -5,12 +5,15 @@
 #include "utilities.h"
 #include <iostream>
 
+unsigned int squareGlobalShaderProg;
+
 void Square::init(std::string vertexShaderPath, std::string fragmentShaderPath) {
     initBuffers(VBO, VAO, vertices, sizeof(vertices));
-    unsigned int vs = initVertexShader(vertexShaderPath);
-    unsigned int fs = initFragmentShader(fragmentShaderPath);
-    unsigned int sp = linkShaders(vs, fs);
-    shaderProgram = sp;
+
+    if(!squareGlobalShaderProg) {
+        std::cout << "Gobal square shader initialized" << std::endl;
+        squareGlobalShaderProg = initShaders(vertexShaderPath, fragmentShaderPath);
+    }
 }
 
 void Square::update(const glm::vec2& position, float rotation) {
@@ -22,16 +25,24 @@ void Square::update(const glm::vec2& position, float rotation) {
 }
 
 void Square::render() {
-    unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+    unsigned int transformLoc = glGetUniformLocation(squareGlobalShaderProg, "transform");
 
     if (transformLoc == -1) {
         std::cerr << "Could not find uniform location for 'transform'" << std::endl;
     }
     else {
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transformationMatrix));
-        drawShape(shaderProgram, VAO, 0, 6);
     }
 }
+
+void Square::useShaderProg() {
+    useSpecificShader(squareGlobalShaderProg);
+}
+
+void Square::draw() {
+    drawShape(squareGlobalShaderProg, VAO, 0, 6);
+}
+
 
 void Square::setWidthHeight(int w, int h) {
     width = w;
@@ -40,10 +51,7 @@ void Square::setWidthHeight(int w, int h) {
 
 void Ground::init(std::string vertexShaderPath, std::string fragmentShaderPath) {
     initBuffers(VBO, VAO, vertices, sizeof(vertices));
-    unsigned int vs = initVertexShader(vertexShaderPath);
-    unsigned int fs = initFragmentShader(fragmentShaderPath);
-    unsigned int sp = linkShaders(vs, fs);
-    shaderProgram = sp;
+    shaderProgram = initShaders(vertexShaderPath, fragmentShaderPath);
 }
 
 void Ground::update(const glm::vec2& position, float rotation) {
@@ -67,6 +75,14 @@ void Ground::render() {
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transformationMatrix));
         drawShape(shaderProgram, VAO, 0, 6);
     }
+}
+
+void Ground::useShaderProg() {
+    useSpecificShader(shaderProgram);
+}
+
+void Ground::draw() {
+    drawShape(shaderProgram, VAO, 0, 6);
 }
 
 std::shared_ptr<Shape> ShapeFactory::createShape(const std::string& shapeType) {

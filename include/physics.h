@@ -20,7 +20,7 @@ const int gravity = 9.81;
 
 void stepPhysics();
 void renderScene();
-void addToMap(std::shared_ptr<Shape>, b2Body*, std::string);
+void addToMap(std::shared_ptr<Shape>, b2Body*, std::string, std::string);
 
 void addStaticGround(int, int, int, int, bool);
 void addRect(int, int, int, int, bool);

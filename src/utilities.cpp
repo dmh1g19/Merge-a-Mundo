@@ -19,6 +19,8 @@ glm::vec2 shapeSizeToOpenGL(float w, float h) {
     return glm::vec2(wScaled, hScaled);
 }
 
+// OpenGL uses pixels, Box2D uses meters
+
 float pixels2Meters(float n) {
     return P2M * n;
 }

@@ -13,7 +13,6 @@ int main()
 
     addStaticGround(WIDTH / 2, HEIGHT - 20 / 2 - 100, WIDTH / 2, 20, false);
 
-    // Render loop
     while(!glfwWindowShouldClose(window))
     {
         double currentFrameTime = glfwGetTime();

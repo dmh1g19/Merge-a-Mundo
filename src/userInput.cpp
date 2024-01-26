@@ -13,13 +13,18 @@ void processInput(GLFWwindow* window) {
 
         delete world;
     }
+    else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        mousePressed = false;
+    }
     else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         if(!mousePressed) {
             double xpos;
             double ypos;
 
             glfwGetCursorPos(window, &xpos, &ypos);
-            addRect(xpos, ypos, 20, 20, true); 
+            addRect(xpos, ypos, 30, 30, true); 
+
+            mousePressed = true;
         }
     }
 }

@@ -8,6 +8,8 @@ b2World* world;
 ShapeFactory factory;
 std::unordered_map<b2Body*, std::shared_ptr<Shape>> bodyShapeMap;
 
+bool isGroundAdded = false;
+
 void stepPhysics() {
     world->Step(simulationFrameRate, velocityIteration, positionIteration);
 }
@@ -23,9 +25,13 @@ void addStaticGround(int x, int y, int w, int h, bool dyn) {
     bottomShape.SetAsBox(pixels2Meters(w/2), pixels2Meters(h/2)); // We must provide half of the width and height as per box2d spec
     body->CreateFixture(&bottomShape, 0.0f);
 
-    std::shared_ptr<Shape> ground = factory.createShape("Ground");
-    ground->setWidthHeight(w, h);
-    addToMap(ground, body, "../shaders/vertex_shader.glsl");
+    if(!isGroundAdded) {
+        std::shared_ptr<Shape> ground = factory.createShape("Ground");
+        ground->setWidthHeight(w, h);
+        ground->init("../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
+        addToMap(ground, body, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
+        isGroundAdded = true;
+    }
 }
 
 void addRect(int x, int y, int w, int h, bool dyn) {
@@ -48,15 +54,14 @@ void addRect(int x, int y, int w, int h, bool dyn) {
 
     std::shared_ptr<Shape> square = factory.createShape("Square");
     square->setWidthHeight(w, h);
-
-    addToMap(square, body, "../shaders/vertex_shader.glsl");
+    addToMap(square, body, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader.glsl");
 }
 
 // Associate the shape with the body in a map this essentially adds the object to the world 
-void addToMap(std::shared_ptr<Shape> object, b2Body* body, std::string vertexShader) {
+void addToMap(std::shared_ptr<Shape> object, b2Body* body, std::string vertexShader, std::string fragmentShader) {
     // TODO: dynamically add shaders, perhaps through a shader class
 
-    object->init(vertexShader, "../shaders/fragment_shader_red.glsl");
+    object->init(vertexShader, fragmentShader);
     bodyShapeMap[body] = object;
 }
 
@@ -75,8 +80,10 @@ void renderScene() {
         const b2Vec2& position = body->GetPosition();
         float angle = body->GetAngle();
 
-        shape->update(glm::vec2(meters2Pixels(position.x), meters2Pixels(position.y)), angle/-1); // Have to invert the angle for some reason
+        shape->useShaderProg();
+        shape->update(glm::vec2(meters2Pixels(position.x), meters2Pixels(position.y)), angle/-1); // Have to invert the angle for opengl
         shape->render();
+        shape->draw();
     }
 
 }

@@ -54,97 +54,96 @@ void initBuffers(unsigned int& VBO, unsigned int& VAO, float vertices[], size_t 
     std::cout << "1 - Initialized VAO and VBO" << std::endl;
 }
 
-unsigned int initVertexShader(std::string& path) {
+unsigned int initShaders(std::string& path1, std::string& path2) {
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
     // Attach the shader source code to the shader object and compile the shader
-    std::string vertexShaderCode = readShaderFromFile(path);
+    std::string vertexShaderCode = readShaderFromFile(path1);
     const char* vertexShaderSource = vertexShaderCode.c_str();
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
+    checkCompileErrors(vertexShader, "VERTEX");
+    std::cout << "2 - Initialized vertex shader" << std::endl;
 
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-    if(!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    else {
-        std::cout << "2 - Initialized vertex shader" << std::endl;
-    }
-
-    return vertexShader;
-}
-
-// For calculating the colour
-unsigned int initFragmentShader(std::string& path) {
     unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    std::string fragmentShaderCode = readShaderFromFile(path);
+    std::string fragmentShaderCode = readShaderFromFile(path2);
     const char* fragmentShaderSource = fragmentShaderCode.c_str();
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
-
-    int success;
-    char infoLog[512];
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-    if(!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    else {
-        std::cout << "3 - Initialized fragment shader" << std::endl;
-    }
-
-    return fragmentShader;
-}
-
-unsigned int linkShaders(unsigned int vertexShader, unsigned int fragmentShader) {
+    checkCompileErrors(fragmentShader, "FRAGMENT");
+    std::cout << "3 - Initialized fragment shader" << std::endl;
+    
     unsigned int shaderProgram;
     shaderProgram = glCreateProgram();    
 
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
+    checkCompileErrors(shaderProgram, "PROGRAM");
+    std::cout << "4 - Linked shaders" << std::endl;
 
-    int success;
-    char infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::LINKER::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    else {
-        std::cout << "4 - Linked vertex and fragment shaders (program object made)" << std::endl;
-        std::cout << "  - every rendering call will use this program object" << std::endl;
-    }
-
-    glUseProgram(shaderProgram);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);  
 
     return shaderProgram;
 }
 
-void drawShape(unsigned int shaderProgram, unsigned int VAO, int minVertices, int maxVertices) {
+void useSpecificShader(unsigned int shaderProgram) {
+    //std::cout << "Using shader: " << std::to_string(shaderProgram) << std::endl;
     glUseProgram(shaderProgram);
+}
 
+void drawShape(unsigned int shaderProgram, unsigned int VAO, int minVertices, int maxVertices) {
+    //std::cout << "Shader program ID: " + std::to_string(shaderProgram) << std::endl;
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, minVertices, maxVertices);
     glBindVertexArray(0);
 
+    // Check for OpenGL errors after drawing
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        std::cerr << "OpenGL error: " << err << std::endl;
+        std::cerr << "OpenGL error after drawing shape: " << getGLErrorString(err) << " (Error Code: " << err << ")" << std::endl;
     }
 
     //std::cout << "6 - Drew shape" << std::endl;
+}
+
+void checkCompileErrors(unsigned int shader, std::string type) {
+    int success;
+    char infoLog[1024];
+
+    if (type != "PROGRAM")
+    {
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+            std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n" << std::endl;
+        }
+    }
+    else
+    {
+        glGetProgramiv(shader, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+            std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n" << std::endl;
+        }
+    }
+};
+
+const char* getGLErrorString(GLenum err) {
+    switch (err) {
+        case GL_INVALID_ENUM:                  return "GL_INVALID_ENUM";
+        case GL_INVALID_VALUE:                 return "GL_INVALID_VALUE";
+        case GL_INVALID_OPERATION:             return "GL_INVALID_OPERATION";
+        case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
+        case GL_OUT_OF_MEMORY:                 return "GL_OUT_OF_MEMORY";
+        case GL_STACK_UNDERFLOW:               return "GL_STACK_UNDERFLOW";
+        case GL_STACK_OVERFLOW:                return "GL_STACK_OVERFLOW";
+        default:                               return "Unknown Error";
+    }
 }
