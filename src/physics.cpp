@@ -1,67 +1,63 @@
 #include "physics.h"
+#include "utilities.h"
 #include "shape.h"
 #include <iostream>
 #include <unordered_map>
 
 b2World* world; 
+ShapeFactory factory;
 std::unordered_map<b2Body*, std::shared_ptr<Shape>> bodyShapeMap;
 
 void stepPhysics() {
     world->Step(simulationFrameRate, velocityIteration, positionIteration);
 }
 
-void initStaticGround() {
+void addStaticGround(int x, int y, int w, int h, bool dyn) {
     world = new b2World(b2Vec2(0.0, gravity));
 
-    // Bucket dimensions
-    float bucketWidth = WIDTH / 2 * P2M;
-    float bucketHeight = 50 * P2M;
-    float wallThickness = 20 * P2M;    
+    b2BodyDef bodyDef;
+    bodyDef.position.Set(pixels2Meters(x), pixels2Meters(y));
+    b2Body* body = world->CreateBody(&bodyDef);
 
-    // Create a static body for the bucket
-    b2BodyDef bucketBodyDef;
-
-    int bucketOffset = 100;
-    float bucketCenterX = WIDTH / 2 * P2M; 
-    float bucketCenterY = (HEIGHT - bucketHeight / 2 - bucketOffset) * P2M;
-    bucketBodyDef.position.Set(bucketCenterX, bucketCenterY);
-    
-    b2Body* bucketBody = world->CreateBody(&bucketBodyDef);
     b2PolygonShape bottomShape;
-    bottomShape.SetAsBox(bucketWidth / 2, wallThickness / 2, b2Vec2(0, bucketHeight / 2), 0);
-    bucketBody->CreateFixture(&bottomShape, 0.0f);
+    bottomShape.SetAsBox(pixels2Meters(w/2), pixels2Meters(h/2)); // We must provide half of the width and height as per box2d spec
+    body->CreateFixture(&bottomShape, 0.0f);
+
+    std::shared_ptr<Shape> ground = factory.createShape("Ground");
+    ground->setWidthHeight(w, h);
+    ground->init("../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
+    addToMap(ground, body, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
 }
 
-b2Body* addRect(int x, int y, int w, int h, bool dyn) {
+void addRect(int x, int y, int w, int h, bool dyn) {
     std::cout << "\nMade rectangle at " + std::to_string(x) + ", " + std::to_string(y) << std::endl;
 
     b2BodyDef bodydef;
-    bodydef.position.Set(x * P2M, y * P2M); // Convert coordinates from pixels to meters
-
+    bodydef.position.Set(pixels2Meters(x), pixels2Meters(y));
     if (dyn) {
         bodydef.type = b2_dynamicBody;
     }
-
     b2Body* body = world->CreateBody(&bodydef);
 
     b2PolygonShape shape;
-    shape.SetAsBox(P2M * w / 2, P2M * h / 2); // Convert dimensions from pixels to meters
+    shape.SetAsBox(pixels2Meters(w/2), pixels2Meters(h/2));
 
     b2FixtureDef fixturedef;
     fixturedef.shape = &shape;
     fixturedef.density = dynamicBodyDensity; 
-
     body->CreateFixture(&fixturedef);
 
-    // TODO: add to its own function
-    // Create and initialize a new shape
-    // Associate the shape with the body in a map
-    ShapeFactory factory;
-    auto square = factory.createShape("Square");
-    square->init(x, y, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
-    bodyShapeMap[body] = square;
+    std::shared_ptr<Shape> square = factory.createShape("Square");
+    square->setWidthHeight(w, h);
+    addToMap(square, body, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader.glsl");
+}
 
-    return body;
+// Associate the shape with the body in a map this essentially adds the object to the world 
+void addToMap(std::shared_ptr<Shape> object, b2Body* body, std::string vertexShader, std::string fragmentShader) {
+    // TODO: dynamically add shaders, perhaps through a shader class
+
+    object->init(vertexShader, fragmentShader);
+    bodyShapeMap[body] = object;
 }
 
 // Draw all the objects in the scene after associating the box2d objects with the opengl shapes
@@ -79,8 +75,10 @@ void renderScene() {
         const b2Vec2& position = body->GetPosition();
         float angle = body->GetAngle();
 
-        shape->update(glm::vec2(position.x * M2P, position.y * M2P), angle);
+        shape->useShaderProg();
+        shape->update(glm::vec2(meters2Pixels(position.x), meters2Pixels(position.y)), angle/-1); // Have to invert the angle for opengl
         shape->render();
+        shape->draw();
     }
 
 }

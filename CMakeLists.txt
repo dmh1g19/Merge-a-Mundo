@@ -16,6 +16,7 @@ set(SOURCES
     src/shape.cpp
     src/physics.cpp
     src/glad.c
+    src/utilities.cpp
 )
 
 add_executable(main ${SOURCES})

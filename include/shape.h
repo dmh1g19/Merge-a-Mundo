@@ -4,15 +4,18 @@
 #include <memory>
 #include <string>
 #include <glm/glm.hpp>          // The main GLM header
-#include <glm/gtc/matrix_transform.hpp>  // For glm::translate, glm::rotate, glm::scale
 #include <glm/gtc/type_ptr.hpp>  // For glm::value_ptr
 
+//TODO: Update to use indexing 
 
 class Shape {
 public:
-    virtual void init(int, int, std::string, std::string) = 0;
+    virtual void init(std::string, std::string) = 0;
     virtual void update(const glm::vec2&, float) = 0; 
     virtual void render() = 0;
+    virtual void setWidthHeight(int, int) = 0;
+    virtual void useShaderProg() = 0;
+    virtual void draw() = 0;
     virtual ~Shape() = default;
 };
 
@@ -34,15 +37,48 @@ private:
         -0.5f, -0.5f, 0.0f  
     };
 
+    int width;
+    int height;    
     unsigned int VBO;
     unsigned int VAO;
     unsigned int shaderProgram;
     glm::mat4 transformationMatrix;
 
 public:
-    void init(int, int, std::string, std::string) override;
+    void setWidthHeight(int, int) override;
+    void init(std::string, std::string) override;
     void update(const glm::vec2&, float) override;
     void render() override;
+    void useShaderProg() override;
+    void draw() override;
+};
+
+class Ground : public Shape {
+private:
+    float vertices[18] = {
+        -0.5f,  0.5f, 0.0f, 
+         0.5f,  0.5f, 0.0f, 
+        -0.5f, -0.5f, 0.0f, 
+
+         0.5f,  0.5f, 0.0f, 
+         0.5f, -0.5f, 0.0f, 
+        -0.5f, -0.5f, 0.0f  
+    };
+
+    int width;
+    int height;    
+    unsigned int VBO;
+    unsigned int VAO;
+    unsigned int shaderProgram;
+    glm::mat4 transformationMatrix;
+
+public:
+    void setWidthHeight(int, int) override;
+    void init(std::string, std::string) override;
+    void update(const glm::vec2&, float) override;
+    void render() override;
+    void useShaderProg() override;
+    void draw() override;
 };
 
 class ShapeFactory {
