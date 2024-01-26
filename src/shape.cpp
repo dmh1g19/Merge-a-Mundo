@@ -14,6 +14,9 @@ void Square::init(std::string vertexShaderPath, std::string fragmentShaderPath) 
         std::cout << "Gobal square shader initialized" << std::endl;
         squareGlobalShaderProg = initShaders(vertexShaderPath, fragmentShaderPath);
     }
+    else {
+        std::cout << "Using gobal square shader program" << std::endl;
+    }
 }
 
 void Square::update(const glm::vec2& position, float rotation) {
