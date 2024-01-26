@@ -8,8 +8,6 @@ b2World* world;
 ShapeFactory factory;
 std::unordered_map<b2Body*, std::shared_ptr<Shape>> bodyShapeMap;
 
-bool isGroundAdded = false;
-
 void stepPhysics() {
     world->Step(simulationFrameRate, velocityIteration, positionIteration);
 }
@@ -25,13 +23,10 @@ void addStaticGround(int x, int y, int w, int h, bool dyn) {
     bottomShape.SetAsBox(pixels2Meters(w/2), pixels2Meters(h/2)); // We must provide half of the width and height as per box2d spec
     body->CreateFixture(&bottomShape, 0.0f);
 
-    if(!isGroundAdded) {
-        std::shared_ptr<Shape> ground = factory.createShape("Ground");
-        ground->setWidthHeight(w, h);
-        ground->init("../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
-        addToMap(ground, body, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
-        isGroundAdded = true;
-    }
+    std::shared_ptr<Shape> ground = factory.createShape("Ground");
+    ground->setWidthHeight(w, h);
+    ground->init("../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
+    addToMap(ground, body, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
 }
 
 void addRect(int x, int y, int w, int h, bool dyn) {
