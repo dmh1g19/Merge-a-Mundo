@@ -1,8 +1,10 @@
 #include "physics.h"
 #include "utilities.h"
-#include "shape.h"
+#include "shapeFactory.h"
 #include <iostream>
 #include <unordered_map>
+#include <sstream>
+#include <vector>
 
 b2World* world; 
 ShapeFactory factory;
@@ -12,21 +14,35 @@ void stepPhysics() {
     world->Step(simulationFrameRate, velocityIteration, positionIteration);
 }
 
-void addStaticGround(int x, int y, int w, int h, bool dyn) {
-    world = new b2World(b2Vec2(0.0, gravity));
+void addStaticGround(int x, int y, int w, int h, bool dyn, const std::vector<std::string>& polygonData) {
+    world = new b2World(b2Vec2(0.0f, gravity));
 
     b2BodyDef bodyDef;
+    if (dyn) {
+        bodyDef.type = b2_dynamicBody;
+    } else {
+        bodyDef.type = b2_staticBody;
+    }
     bodyDef.position.Set(pixels2Meters(x), pixels2Meters(y));
+    bodyDef.angle = b2_pi; // Rotate the body by 180 degrees
+
     b2Body* body = world->CreateBody(&bodyDef);
 
-    b2PolygonShape bottomShape;
-    bottomShape.SetAsBox(pixels2Meters(w/2), pixels2Meters(h/2)); // We must provide half of the width and height as per box2d spec
-    body->CreateFixture(&bottomShape, 0.0f);
+    // Add the polygons from PhysicsEditor
+    for (const auto& polyCoords : polygonData) {
+        std::vector<b2Vec2> vertices = parsePolygonCoordinates(polyCoords);
+
+        b2PolygonShape polygonShape;
+        polygonShape.Set(vertices.data(), vertices.size());
+
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = &polygonShape;
+        body->CreateFixture(&fixtureDef);
+    }
 
     std::shared_ptr<Shape> ground = factory.createShape("Ground");
     ground->setWidthHeight(w, h);
-    ground->init("../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
-    addToMap(ground, body, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader_red.glsl");
+    addToMap(ground, body, "../shaders/vertex_shader_ground.glsl", "../shaders/fragment_shader_ground.glsl");
 }
 
 void addRect(int x, int y, int w, int h, bool dyn) {
@@ -49,13 +65,11 @@ void addRect(int x, int y, int w, int h, bool dyn) {
 
     std::shared_ptr<Shape> square = factory.createShape("Square");
     square->setWidthHeight(w, h);
-    addToMap(square, body, "../shaders/vertex_shader.glsl", "../shaders/fragment_shader.glsl");
+    addToMap(square, body, "../shaders/vertex_shader_square.glsl", "../shaders/fragment_shader_square.glsl");
 }
 
-// Associate the shape with the body in a map this essentially adds the object to the world 
+// Associate the shape with the body in a map, this baically adds the object to the world 
 void addToMap(std::shared_ptr<Shape> object, b2Body* body, std::string vertexShader, std::string fragmentShader) {
-    // TODO: dynamically add shaders, perhaps through a shader class
-
     object->init(vertexShader, fragmentShader);
     bodyShapeMap[body] = object;
 }
@@ -82,4 +96,3 @@ void renderScene() {
     }
 
 }
-

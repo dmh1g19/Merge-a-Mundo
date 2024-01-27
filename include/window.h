@@ -5,8 +5,8 @@
 #include <GLFW/glfw3.h>
 
 // Application window dimensions
-const int WIDTH = 640;
-const int HEIGHT = 480;
+const int WIDTH = 500;
+const int HEIGHT = 800;
 
 // Frame rate settings
 const double framesPerSecond = 60.0;

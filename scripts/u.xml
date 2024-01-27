@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- created with http://www.physicseditor.de -->
+<bodydef version="1.0">
+	<bodies>
+
+		<body name="u2 (3)">
+            <anchorpoint>0.5000,0.5010</anchorpoint>
+			<fixtures>
+
+				<fixture>
+					<density>2</density>
+					<friction>0</friction>
+					<restitution>0</restitution>
+					<filter_categoryBits>1</filter_categoryBits>
+					<filter_groupIndex>0</filter_groupIndex>
+					<filter_maskBits>65535</filter_maskBits>
+					<fixture_type>POLYGON</fixture_type>
+
+
+					<polygons>
+
+                        <polygon>  135.0000, 308.8810  ,  133.0000, 32.8810  ,  222.0000, -1.1190  ,  222.0000, 308.8810 </polygon>
+
+                        <polygon>  133.0000, 32.8810  ,  122.0000, -35.1190  ,  113.0000, -266.1190  ,  156.0000, -214.1190  ,  187.0000, -155.1190  ,  212.0000, -74.1190  ,  222.0000, -1.1190 </polygon>
+
+                        <polygon>  -135.0000, 308.8810  ,  -222.0000, 308.8810  ,  -221.0000, -1.1190  ,  -135.0000, 31.8810 </polygon>
+
+                        <polygon>  -135.0000, 31.8810  ,  -221.0000, -1.1190  ,  -212.0000, -75.1190  ,  -191.0000, -142.1190  ,  -120.0000, -48.1190 </polygon>
+
+                        <polygon>  -120.0000, -48.1190  ,  -191.0000, -142.1190  ,  -163.0000, -203.1190  ,  -131.0000, -248.1190  ,  -82.0000, -291.1190  ,  -43.0000, -309.1190  ,  -95.0000, -101.1190 </polygon>
+
+                        <polygon>  113.0000, -266.1190  ,  122.0000, -35.1190  ,  113.0000, -66.1190  ,  62.0000, -302.1190 </polygon>
+
+                        <polygon>  -43.0000, -309.1190  ,  28.0000, -309.1190  ,  62.0000, -302.1190  ,  -95.0000, -101.1190 </polygon>
+
+                        <polygon>  113.0000, -66.1190  ,  82.0000, -119.1190  ,  62.0000, -302.1190 </polygon>
+
+                        <polygon>  82.0000, -119.1190  ,  45.0000, -151.1190  ,  62.0000, -302.1190 </polygon>
+
+                        <polygon>  45.0000, -151.1190  ,  16.0000, -162.1190  ,  62.0000, -302.1190 </polygon>
+
+                        <polygon>  16.0000, -162.1190  ,  -37.0000, -155.1190  ,  62.0000, -302.1190 </polygon>
+
+                        <polygon>  -37.0000, -155.1190  ,  -69.0000, -133.1190  ,  62.0000, -302.1190 </polygon>
+
+					</polygons>
+
+				</fixture>
+
+			</fixtures>
+		</body>
+
+	</bodies>
+	<metadata>
+		<format>1</format>
+		<ptm_ratio>32</ptm_ratio>
+	</metadata>
+</bodydef>
+
+
+
