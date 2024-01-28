@@ -13,10 +13,13 @@ set(SOURCES
     src/window.cpp
     src/userInput.cpp
     src/rendering.cpp
-    src/shape.cpp
+    src/square.cpp
     src/physics.cpp
     src/glad.c
     src/utilities.cpp
+    src/shapeFactory.cpp
+    src/ground.cpp
+    src/circle.cpp
 )
 
 add_executable(main ${SOURCES})

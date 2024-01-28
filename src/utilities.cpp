@@ -19,6 +19,18 @@ glm::vec2 shapeSizeToOpenGL(float w, float h) {
     return glm::vec2(wScaled, hScaled);
 }
 
+float shapeSizeToOpenGLWidth(float w) {
+    float wScaled = (w / WIDTH) * 2.0f;
+    
+    return wScaled;
+}
+
+float shapeSizeToOpenGLHeight(float h) {
+    float hScaled = (h / HEIGHT) * 2.0f;
+    
+    return hScaled;
+}
+
 // OpenGL uses pixels, Box2D uses meters
 
 float pixels2Meters(float n) {
@@ -38,4 +50,21 @@ void printShaderProgramMatrix(glm::mat4 transformationMatrix) {
         }
         std::cout << std::endl;
     }
+}
+
+std::vector<b2Vec2> parsePolygonCoordinates(const std::string& coords) {
+    std::vector<b2Vec2> vertices;
+    std::istringstream iss(coords);
+    std::string token;
+    while (std::getline(iss, token, ',')) {
+        float x = std::stof(token);
+        if (!std::getline(iss, token, ',')) break;
+        float y = std::stof(token);
+        vertices.push_back(b2Vec2(pixels2Meters(x), pixels2Meters(y)));
+    }
+
+    // Flip the vector to correct the orientation
+    std::reverse(vertices.begin(), vertices.end());
+
+    return vertices;
 }

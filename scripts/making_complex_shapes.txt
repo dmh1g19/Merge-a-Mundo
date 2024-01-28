@@ -1,0 +1,20 @@
+# Worflow for making complex shapes
+
+## First
+
+Create the bounding area in ```physicsEditor```
+
+## Second
+
+Export the coordinates and create a groundBinding vector (look at shapeFactory for examples)
+
+## Third
+
+Use python script to triangulate polygons generated for making the bounding box and use those vertices for openGL
+
+WARNING
+
+Translating complex shapes works fine, as well as any other operations except scaling!
+
+I haven't sorted scaling out yet, for the mean time it takes x=0, y=0 and used the default vertices for placement,
+when generating the bounding box make sure it's generates in a window with the same window size initially.
