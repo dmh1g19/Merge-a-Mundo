@@ -24,7 +24,7 @@ void processInput(GLFWwindow* window) {
         
         if((currentTime - lastMouseClickTime >= cooldownDuration)) {
             glfwGetCursorPos(window, &xpos, &ypos);
-            addCircle(xpos, ypos, 5, true); 
+            addCircle(xpos, ypos, 4, true); 
             
             lastMouseClickTime = currentTime;
         }
