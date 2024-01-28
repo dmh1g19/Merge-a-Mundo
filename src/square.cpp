@@ -50,6 +50,3 @@ void Square::setWidthHeight(int w, int h) {
     width = w;
     height = h;
 }
-
-std::vector<std::string> Square::getBinding() {
-}

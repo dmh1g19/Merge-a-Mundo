@@ -25,8 +25,8 @@ void renderScene();
 void addToMap(std::shared_ptr<Shape>, b2Body*, std::string, std::string);
 
 void addStaticGround(int, int, int, int, bool, const std::vector<std::string>&);
-
 void addRect(int, int, int, int, bool);
+void addCircle(int, int, int, bool);
 
 std::vector<b2Vec2> parsePolygonCoordinates(const std::string&);
 

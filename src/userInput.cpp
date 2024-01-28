@@ -18,7 +18,11 @@ void processInput(GLFWwindow* window) {
         delete world;
     }
     else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        double xpos;
+        double ypos;
 
+        glfwGetCursorPos(window, &xpos, &ypos);
+        addCircle(xpos, ypos, 30, true); 
     }
     else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         auto currentTime = std::chrono::system_clock::now();

@@ -14,10 +14,13 @@ public:
     virtual void init(std::string, std::string) = 0;
     virtual void update(const glm::vec2&, float) = 0; 
     virtual void render() = 0;
-    virtual void setWidthHeight(int, int) = 0;
     virtual void useShaderProg() = 0;
     virtual void draw() = 0;
-    virtual std::vector<std::string> getBinding() = 0;
+    
+    virtual void setWidthHeight(int, int) { };
+    virtual void setRadius(int) { };
+    virtual std::vector<std::string> getBinding() { };
+    
     virtual ~Shape() = default;
 };
 
@@ -46,7 +49,6 @@ public:
     void update(const glm::vec2&, float) override;
     void render() override;
     void useShaderProg() override;
-    std::vector<std::string> getBinding() override;
     void draw() override;
 };
 
@@ -163,12 +165,49 @@ public:
     void render() override;
     void useShaderProg() override;
     void draw() override;
-    std::vector<std::string> getBinding() override;
+
+    std::vector<std::string> getBinding() override {
+        return groundBounding;
+    }
 };
 
 class ShapeFactory {
 public:
     std::shared_ptr<Shape> createShape(const std::string& shapeType);
+};
+
+class Circle : public Shape {
+private:
+    static const int vertexCount = 36; // 36 vertices for a smoother circle
+    float vertices[vertexCount * 3] = {}; // 3 components (x, y, z) per vertex
+    int radius;
+    unsigned int VBO;
+    unsigned int VAO;
+    unsigned int shaderProgram;
+    glm::mat4 transformationMatrix;
+
+public:
+    void init(std::string, std::string) override;
+    void update(const glm::vec2&, float) override;
+    void render() override;
+    void useShaderProg() override;
+    void draw() override;
+
+    void setRadius(int r) override {
+        radius = r;
+    }
+private:
+    void generateCircleVertices() {
+        const float angleIncrement = 2.0f * M_PI / vertexCount;
+
+        for (int i = 0; i < vertexCount; ++i) {
+            float angle = i * angleIncrement;
+            // Calculate x and y based on the angle and radius
+            vertices[i * 3] = radius * cos(angle);     // x
+            vertices[i * 3 + 1] = radius * sin(angle); // y
+            vertices[i * 3 + 2] = 0.0f;                // z (assuming circle is in 2D plane)
+        }
+    }
 };
 
 #endif // SHAPE_H

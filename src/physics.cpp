@@ -48,12 +48,14 @@ void addStaticGround(int x, int y, int w, int h, bool dyn, const std::vector<std
 void addRect(int x, int y, int w, int h, bool dyn) {
     std::cout << "\nMade rectangle at " + std::to_string(x) + ", " + std::to_string(y) << std::endl;
 
-    b2BodyDef bodydef;
-    bodydef.position.Set(pixels2Meters(x), pixels2Meters(y));
+    b2BodyDef bodyDef;
+    bodyDef.position.Set(pixels2Meters(x), pixels2Meters(y));
     if (dyn) {
-        bodydef.type = b2_dynamicBody;
+        bodyDef.type = b2_dynamicBody;
+    } else {
+        bodyDef.type = b2_staticBody;
     }
-    b2Body* body = world->CreateBody(&bodydef);
+    b2Body* body = world->CreateBody(&bodyDef);
 
     b2PolygonShape shape;
     shape.SetAsBox(pixels2Meters(w/2), pixels2Meters(h/2));
@@ -66,6 +68,29 @@ void addRect(int x, int y, int w, int h, bool dyn) {
     std::shared_ptr<Shape> square = factory.createShape("Square");
     square->setWidthHeight(w, h);
     addToMap(square, body, "../shaders/vertex_shader_square.glsl", "../shaders/fragment_shader_square.glsl");
+}
+
+void addCircle(int x, int y, int radius, bool dyn) {
+    std::cout << "\nMade circle at " + std::to_string(x) + ", " + std::to_string(y) << std::endl;
+
+    b2BodyDef bodydef;
+    bodydef.position.Set(pixels2Meters(x), pixels2Meters(y));
+    if (dyn) {
+        bodydef.type = b2_dynamicBody;
+    }
+    b2Body* body = world->CreateBody(&bodydef);
+
+    b2CircleShape shape;
+    shape.m_radius = pixels2Meters(radius);
+
+    b2FixtureDef fixturedef;
+    fixturedef.shape = &shape;
+    fixturedef.density = dynamicBodyDensity; 
+    body->CreateFixture(&fixturedef);
+
+    std::shared_ptr<Shape> circle = factory.createShape("Circle");
+    circle->setRadius(radius);
+    addToMap(circle, body, "../shaders/vertex_shader_circle.glsl", "../shaders/fragment_shader_circle.glsl");
 }
 
 // Associate the shape with the body in a map, this baically adds the object to the world 

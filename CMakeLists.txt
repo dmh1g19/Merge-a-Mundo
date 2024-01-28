@@ -19,6 +19,7 @@ set(SOURCES
     src/utilities.cpp
     src/shapeFactory.cpp
     src/ground.cpp
+    src/circle.cpp
 )
 
 add_executable(main ${SOURCES})

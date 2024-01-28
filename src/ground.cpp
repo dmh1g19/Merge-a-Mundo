@@ -36,10 +36,6 @@ void Ground::draw() {
     drawShape(shaderProgram, VAO, 0, 6);
 }
 
-std::vector<std::string> Ground::getBinding() {
-    return groundBounding;
-}
-
 void Ground::setWidthHeight(int w, int h) {
     width = w;
     height = h;
