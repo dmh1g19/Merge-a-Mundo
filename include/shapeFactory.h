@@ -1,6 +1,7 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
+#include "utilities.h"
 #include <memory>
 #include <string>
 #include <glm/glm.hpp>          // The main GLM header
@@ -16,6 +17,7 @@ public:
     virtual void render() = 0;
     virtual void useShaderProg() = 0;
     virtual void draw() = 0;
+    virtual void generateCircleVertices() { };
     
     virtual void setWidthHeight(int, int) { };
     virtual void setRadius(int) { };
@@ -178,7 +180,14 @@ public:
 
 class Circle : public Shape {
 private:
-    static const int vertexCount = 36; // 36 vertices for a smoother circle
+
+    //float vertices[10] = {
+    //    1.0f, 0.0f, 0.0f,
+    //    -0.5f, 0.866f, 0.0f,
+    //    -0.5f, -0.866f, 0.0f
+    //};
+
+    static const int vertexCount = 30; // 36 vertices for a smoother circle
     float vertices[vertexCount * 3] = {}; // 3 components (x, y, z) per vertex
     int radius;
     unsigned int VBO;
@@ -196,16 +205,14 @@ public:
     void setRadius(int r) override {
         radius = r;
     }
-private:
-    void generateCircleVertices() {
-        const float angleIncrement = 2.0f * M_PI / vertexCount;
 
+    void generateCircleVertices() override {
         for (int i = 0; i < vertexCount; ++i) {
-            float angle = i * angleIncrement;
-            // Calculate x and y based on the angle and radius
-            vertices[i * 3] = radius * cos(angle);     // x
-            vertices[i * 3 + 1] = radius * sin(angle); // y
-            vertices[i * 3 + 2] = 0.0f;                // z (assuming circle is in 2D plane)
+            float angle = 2.0f * M_PI * float(i) / float(vertexCount);
+
+            vertices[i * 3] = radius * cos(angle);
+            vertices[i * 3 + 1] = radius * sin(angle);      // y-coordinate
+            vertices[i * 3 + 2] = 0.0f;                     // z-coordinate
         }
     }
 };

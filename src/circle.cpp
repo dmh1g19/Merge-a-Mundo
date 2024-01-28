@@ -23,7 +23,7 @@ void Circle::update(const glm::vec2& position, float rotation) {
     //std::cout << "Updating position: " + std::to_string(position.x) + ", " + std::to_string(position.y) + ", " + std::to_string(rotation) << std::endl;
     transformationMatrix = glm::mat4(1.0f);
     transformationMatrix = glm::translate(transformationMatrix, glm::vec3(screenCoordsToOpenGL(position), 0.0f));
-    transformationMatrix = glm::scale(transformationMatrix, glm::vec3(shapeSizeToOpenGLWidth(radius), shapeSizeToOpenGLWidth(radius), 1.0f));
+    transformationMatrix = glm::scale(transformationMatrix, glm::vec3(shapeSizeToOpenGLWidth(radius), shapeSizeToOpenGLHeight(radius), 1.0f));
     transformationMatrix = glm::rotate(transformationMatrix, rotation, glm::vec3(0.0, 0.0, 1.0));
 }
 
@@ -43,5 +43,5 @@ void Circle::useShaderProg() {
 }
 
 void Circle::draw() {
-    drawShape(globalShaderProg, VAO, 0, 36*3);
+    drawShape(globalShaderProg, VAO, 0, 30*3, true);
 }

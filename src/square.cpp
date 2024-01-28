@@ -43,7 +43,7 @@ void Square::useShaderProg() {
 }
 
 void Square::draw() {
-    drawShape(squareGlobalShaderProg, VAO, 0, 6);
+    drawShape(squareGlobalShaderProg, VAO, 0, 6, false);
 }
 
 void Square::setWidthHeight(int w, int h) {

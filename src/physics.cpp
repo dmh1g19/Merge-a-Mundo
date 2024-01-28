@@ -81,7 +81,7 @@ void addCircle(int x, int y, int radius, bool dyn) {
     b2Body* body = world->CreateBody(&bodydef);
 
     b2CircleShape shape;
-    shape.m_radius = pixels2Meters(radius);
+    shape.m_radius = pixels2Meters(radius*radius); // Multiply by 2 to get circumference
 
     b2FixtureDef fixturedef;
     fixturedef.shape = &shape;
@@ -90,6 +90,7 @@ void addCircle(int x, int y, int radius, bool dyn) {
 
     std::shared_ptr<Shape> circle = factory.createShape("Circle");
     circle->setRadius(radius);
+    circle->generateCircleVertices();
     addToMap(circle, body, "../shaders/vertex_shader_circle.glsl", "../shaders/fragment_shader_circle.glsl");
 }
 

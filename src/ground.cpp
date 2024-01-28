@@ -24,7 +24,6 @@ void Ground::render() {
     }
     else {
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transformationMatrix));
-        drawShape(shaderProgram, VAO, 0, 234);
     }
 }
 
@@ -33,7 +32,8 @@ void Ground::useShaderProg() {
 }
 
 void Ground::draw() {
-    drawShape(shaderProgram, VAO, 0, 6);
+    drawShape(shaderProgram, VAO, 0, 234, false);
+    //drawShape(shaderProgram, VAO, 0, 6);
 }
 
 void Ground::setWidthHeight(int w, int h) {

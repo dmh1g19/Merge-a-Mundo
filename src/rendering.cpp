@@ -96,10 +96,15 @@ void useSpecificShader(unsigned int shaderProgram) {
     glUseProgram(shaderProgram);
 }
 
-void drawShape(unsigned int shaderProgram, unsigned int VAO, int minVertices, int maxVertices) {
+void drawShape(unsigned int shaderProgram, unsigned int VAO, int minVertices, int maxVertices, bool isFan) {
     //std::cout << "Shader program ID: " + std::to_string(shaderProgram) << std::endl;
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, minVertices, maxVertices);
+    if(isFan) {
+        glDrawArrays(GL_TRIANGLE_FAN, minVertices, maxVertices);
+    }
+    else {
+        glDrawArrays(GL_TRIANGLES, minVertices, maxVertices);
+    }
     glBindVertexArray(0);
 
     // Check for OpenGL errors after drawing
