@@ -1,3 +1,5 @@
+##  This is a work in progress!
+
 # Merge-a-Mundo
 
 Welcome to Merge-a-Mundo, an addictive game where physics meets fun! In this game, you'll drop objects and watch as they obey the laws of physics. When objects of the same type touch, they merge into a bigger version. Your goal? Merge as many as you can to create the biggest possible object!
